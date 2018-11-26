@@ -123,3 +123,4 @@ class RegistrationController extends AbstractController
       return (json_last_error()===JSON_ERROR_NONE);
   }
 }
+ 
