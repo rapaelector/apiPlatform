@@ -27,7 +27,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
  *         "get",
  *         "post"={"access_control"="is_granted('ROLE_USER')"},
  *     },
-  *    itemOperations={
+ *    itemOperations={
  *         "put"={
  *             "normalization_context"={"groups"={"putUser"}}
  *         },
@@ -55,7 +55,7 @@ class User implements UserInterface, \Serializable
     private $historic;
 
     /**
-     * @ORM\Column(type="string", length=255, unique=true)
+     * @ORM\Column(type="string", length=191, unique=true)
      * @Assert\NotBlank()
      * @Assert\Email()
      * @Groups({"read", "putUser"})
@@ -63,7 +63,7 @@ class User implements UserInterface, \Serializable
     private $email;
 
     /**
-     * @ORM\Column(type="string", length=255, unique=true)
+     * @ORM\Column(type="string", length=191, unique=true)
      * @Assert\NotBlank()
      * @Groups({"read"})
      */
