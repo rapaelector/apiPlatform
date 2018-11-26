@@ -55,7 +55,7 @@ class User implements UserInterface, \Serializable
     private $historic;
 
     /**
-     * @ORM\Column(type="string", unique=true)
+     * @ORM\Column(type="string", length=128, unique=true)
      * @Assert\NotBlank()
      * @Assert\Email()
      * @Groups({"read", "putUser"})
