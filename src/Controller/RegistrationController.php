@@ -13,6 +13,9 @@ use Symfony\Component\HttpFoundation\Response;
 use JsonSchema\Validator;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Lexik\Bundle\JWTAuthenticationBundle\Response\JWTAuthenticationFailureResponse;
+use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 
 class RegistrationController extends AbstractController
 {
@@ -64,7 +67,10 @@ class RegistrationController extends AbstractController
             // set user as content send in post
             $user->setUsername($content->get('user_username'));
             $user->setEmail($content->get('user_email'));
-            $user->setPlainPassword($content->get('plainPassword_first'));
+            $first_pass = $content->get('user_plainPassword_first');
+            $second_pass = $content->get('user_plainPassword_second');
+            $this->checkPassWordEqual($first_pass, $second_pass);
+            $user->setPlainPassword($content->get('user_plainPassword_first'));
             // Encode the password (you could also do this via Doctrine listener)
             $this->encodePassword($user, $passwordEncoder);
 
@@ -121,6 +127,13 @@ class RegistrationController extends AbstractController
   private function is_JSON(...$args) {
       json_decode(...$args);
       return (json_last_error()===JSON_ERROR_NONE);
+  }
+
+  public function checkPassWordEqual($first_pass, $second_pass) {
+      $response = null;
+        if ($first_pass != $second_pass){
+        throw new \Symfony\Component\Config\Definition\Exception\Exception('Your password is not same', 401);
+        }
   }
 }
  
