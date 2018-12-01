@@ -5,6 +5,8 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiSubresource;
 use App\Util\HistoricalTrait;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -27,6 +29,12 @@ use ApiPlatform\Core\Annotation\ApiResource;
  */
 class Etablishment
 {
+
+    public function __construct()
+    {
+        $this->listImage = array();
+        $this->drinks = new ArrayCollection();
+    }
     use HistoricalTrait;
     /**
      * @ORM\Id
@@ -39,7 +47,7 @@ class Etablishment
      * @ORM\Column(type="string", length=255, nullable = true)
      * @Groups({"read", "historicPost", "putUser"})
      */
-    private $nameEtablishment;
+    private $name;
 
     /**
      * @ORM\Column(type="string",nullable = true)
@@ -61,10 +69,10 @@ class Etablishment
     private $description;
 
     /**
-     * @ORM\Column(type="boolean",nullable = true)
+     * @ORM\Column(type="boolean",nullable = true, options={"default" : false})
      * @Groups({"read", "historicPost", "putUser"})
      */
-    private $partner;
+    private $type;
 
     /**
      * @ORM\Column(type="string",nullable = true)
@@ -77,6 +85,38 @@ class Etablishment
      * @Groups({"read", "historicPost", "putUser"})
      */
     private $latitude;
+
+    /**
+     * @ORM\Column(type="string",nullable = true)
+     * @Groups({"read", "historicPost", "putUser"})
+     */
+    private $logo;
+
+    /**
+     * @ORM\Column(type="array",nullable = true)
+     * @Groups({"read", "historicPost", "putUser"})
+     */
+    private $listImage;
+
+    /**
+     * @ORM\Column(type="time",nullable = true)
+     * @Groups({"read", "historicPost", "putUser"})
+     */
+    private $openingHour;
+
+    /**
+     * @ORM\Column(type="time",nullable = true)
+     * @Groups({"read", "historicPost", "putUser"})
+     */
+    private $closingHour;
+
+    /**
+    * @ORM\OneToMany(targetEntity="Drinks", mappedBy="etablishment", cascade={"PERSIST"})
+    * @Groups({"putUser", "historicPost", "read"})
+    */
+    private $drinks;
+
+    
 
     public function getId(): ?int
     {
@@ -163,6 +203,109 @@ class Etablishment
     public function setLatitude(?string $latitude): self
     {
         $this->latitude = $latitude;
+
+        return $this;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(?string $name): self
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    public function getLogo(): ?string
+    {
+        return $this->logo;
+    }
+
+    public function setLogo(?string $logo): self
+    {
+        $this->logo = $logo;
+
+        return $this;
+    }
+
+    public function getListImage(): ?array
+    {
+        return $this->listImage;
+    }
+
+    public function setListImage(?array $listImage): self
+    {
+        $this->listImage = $listImage;
+
+        return $this;
+    }
+
+    public function getOpeningHour(): ?\DateTimeInterface
+    {
+        return $this->openingHour;
+    }
+
+    public function setOpeningHour(?\DateTimeInterface $openingHour): self
+    {
+        $this->openingHour = $openingHour;
+
+        return $this;
+    }
+
+    public function getClosingHour(): ?\DateTimeInterface
+    {
+        return $this->closingHour;
+    }
+
+    public function setClosingHour(?\DateTimeInterface $closingHour): self
+    {
+        $this->closingHour = $closingHour;
+
+        return $this;
+    }
+
+    public function getType(): ?bool
+    {
+        return $this->type;
+    }
+
+    public function setType(?bool $type): self
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Drinks[]
+     */
+    public function getDrinks(): Collection
+    {
+        return $this->drinks;
+    }
+
+    public function addDrink(Drinks $drink): self
+    {
+        if (!$this->drinks->contains($drink)) {
+            $this->drinks[] = $drink;
+            $drink->setEtablishment($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDrink(Drinks $drink): self
+    {
+        if ($this->drinks->contains($drink)) {
+            $this->drinks->removeElement($drink);
+            // set the owning side to null (unless already changed)
+            if ($drink->getEtablishment() === $this) {
+                $drink->setEtablishment(null);
+            }
+        }
 
         return $this;
     }

@@ -70,6 +70,10 @@ class Historic
      * @Groups({"read", "historicPost", "putUser"})
      */
     private $orderDate;
+    /**
+     * @ORM\OneToOne(targetEntity="BuyDrink", cascade={"PERSIST"})
+     */
+    private $bill;
 
     public function getId(): ?int
     {
@@ -144,6 +148,18 @@ class Historic
     public function setEtablishment(?Etablishment $etablishment): self
     {
         $this->etablishment = $etablishment;
+
+        return $this;
+    }
+
+    public function getBill(): ?BuyDrink
+    {
+        return $this->bill;
+    }
+
+    public function setBill(?BuyDrink $bill): self
+    {
+        $this->bill = $bill;
 
         return $this;
     }

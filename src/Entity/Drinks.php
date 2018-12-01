@@ -5,6 +5,8 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiSubresource;
 use App\Util\HistoricalTrait;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -36,16 +38,10 @@ class Drinks
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable = true)
-     * @Groups({"read", "historicPost", "putUser"})
-     */
-    private $name;
-
-    /**
      * @ORM\Column(type="string",nullable = true)
      * @Groups({"read", "historicPost", "putUser"})
      */
-    private $brand;
+    private $brandName;
 
 
     /**
@@ -54,17 +50,47 @@ class Drinks
      */
     private $description;
 
+
+    /**
+     * @ORM\Column(type="integer",nullable = true)
+     * @Groups({"read", "historicPost", "putUser"})
+     */
+    private $price;
+
+
+    /**
+     * @ORM\Column(type="boolean",nullable = true, options={"default" : false})
+     * @Groups({"read", "historicPost", "putUser"})
+     */
+    private $withMixture;
+
+    /**
+    * @ORM\ManyToMany(targetEntity="Mixture", mappedBy="drink", cascade={"PERSIST"})
+    * @Groups({"putUser", "historicPost", "read"})
+    */
+    private $mixtures;
+
     /**
      * @ORM\Column(type="string",nullable = true)
      * @Groups({"read", "historicPost", "putUser"})
      */
-    private $globalPrice;
+    private $image;
 
     /**
-     * @ORM\Column(type="boolean",nullable = true)
-     * @Groups({"read", "historicPost", "putUser"})
+    * @ORM\ManyToOne(targetEntity="Etablishment", inversedBy="drinks")
+    */
+    private $etablishment;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\InqueueCommand", inversedBy="drinkNameList")
      */
-    private $alcohlic;
+    private $inqueueCommand;
+
+    public function __construct()
+    {
+        $this->mixtures = new ArrayCollection();
+        $this->inqueueCommand = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -127,6 +153,145 @@ class Drinks
     public function setAlcohlic(?bool $alcohlic): self
     {
         $this->alcohlic = $alcohlic;
+
+        return $this;
+    }
+
+    public function getEtablishment(): ?Etablishment
+    {
+        return $this->etablishment;
+    }
+
+    public function setEtablishment(?Etablishment $etablishment): self
+    {
+        $this->etablishment = $etablishment;
+
+        return $this;
+    }
+
+    public function getBrandName(): ?string
+    {
+        return $this->brandName;
+    }
+
+    public function setBrandName(?string $brandName): self
+    {
+        $this->brandName = $brandName;
+
+        return $this;
+    }
+
+    public function getPrice(): ?int
+    {
+        return $this->price;
+    }
+
+    public function setPrice(?int $price): self
+    {
+        $this->price = $price;
+
+        return $this;
+    }
+
+    public function getWithMixture(): ?bool
+    {
+        return $this->withMixture;
+    }
+
+    public function setWithMixture(?bool $withMixture): self
+    {
+        $this->withMixture = $withMixture;
+
+        return $this;
+    }
+
+    public function getImage(): ?string
+    {
+        return $this->image;
+    }
+
+    public function setImage(?string $image): self
+    {
+        $this->image = $image;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Mixture[]
+     */
+    public function getMixtures(): Collection
+    {
+        return $this->mixtures;
+    }
+
+    public function addMixture(Mixture $mixture): self
+    {
+        if (!$this->mixtures->contains($mixture)) {
+            $this->mixtures[] = $mixture;
+            $mixture->setDrink($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMixture(Mixture $mixture): self
+    {
+        if ($this->mixtures->contains($mixture)) {
+            $this->mixtures->removeElement($mixture);
+            // set the owning side to null (unless already changed)
+            if ($mixture->getDrink() === $this) {
+                $mixture->setDrink(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getBuyDrink(): ?BuyDrink
+    {
+        return $this->buyDrink;
+    }
+
+    public function setBuyDrink(?BuyDrink $buyDrink): self
+    {
+        $this->buyDrink = $buyDrink;
+
+        // set (or unset) the owning side of the relation if necessary
+        $newDrink = $buyDrink === null ? null : $this;
+        if ($newDrink !== $buyDrink->getDrink()) {
+            $buyDrink->setDrink($newDrink);
+        }
+
+        return $this;
+    }
+
+    public function getInqueueCommand(): ?InqueueCommand
+    {
+        return $this->inqueueCommand;
+    }
+
+    public function setInqueueCommand(?InqueueCommand $inqueueCommand): self
+    {
+        $this->inqueueCommand = $inqueueCommand;
+
+        return $this;
+    }
+
+    public function addInqueueCommand(InqueueCommand $inqueueCommand): self
+    {
+        if (!$this->inqueueCommand->contains($inqueueCommand)) {
+            $this->inqueueCommand[] = $inqueueCommand;
+        }
+
+        return $this;
+    }
+
+    public function removeInqueueCommand(InqueueCommand $inqueueCommand): self
+    {
+        if ($this->inqueueCommand->contains($inqueueCommand)) {
+            $this->inqueueCommand->removeElement($inqueueCommand);
+        }
 
         return $this;
     }

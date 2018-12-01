@@ -88,6 +88,12 @@ class User implements UserInterface, \Serializable
     private $address;
 
     /**
+     * @ORM\Column(type="string", length=255, nullable = true)
+     * @Groups({"read", "putUser"})
+     */
+    private $profilPicture;
+
+    /**
      * @ORM\Column(type="datetime", nullable = true)
      * @Groups({"read", "putUser"})
      */
@@ -296,6 +302,18 @@ class User implements UserInterface, \Serializable
                 $historic->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getProfilPicture(): ?string
+    {
+        return $this->profilPicture;
+    }
+
+    public function setProfilPicture(?string $profilPicture): self
+    {
+        $this->profilPicture = $profilPicture;
 
         return $this;
     }
