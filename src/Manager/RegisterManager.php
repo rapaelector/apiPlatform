@@ -8,6 +8,7 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\HttpFoundation\Response;
+use \Symfony\Component\HttpFoundation\JsonResponse;
 
 class RegisterManager extends BaseManager
 {
@@ -34,7 +35,10 @@ class RegisterManager extends BaseManager
         $this->encodePassword($user);
         $this->validate($user);
 
-        return new Response('You Are Registered in Nitehop', 201);
+        return new JsonResponse([
+            "code" => 201,
+            "message" => "succes"
+        ]);
     }
 
     private function validate(User $user)
