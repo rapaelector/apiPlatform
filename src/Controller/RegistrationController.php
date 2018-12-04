@@ -12,10 +12,10 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\HttpFoundation\Response;
 use JsonSchema\Validator;
 use Doctrine\Common\Collections\ArrayCollection;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Lexik\Bundle\JWTAuthenticationBundle\Response\JWTAuthenticationFailureResponse;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use App\Manager\RegisterManager;
 
 class RegistrationController extends AbstractController
 {
@@ -56,54 +56,10 @@ class RegistrationController extends AbstractController
      * @Route("/register-api", name="user_registration_api")
      * to register user in api
      */
-    public function registerApi(Request $request, UserPasswordEncoderInterface $passwordEncoder, ValidatorInterface $validator)
+    public function registerApi(Request $request, RegisterManager $register)
     {
-        if ($request->isMethod('post')) {
-            $entityManager = $this->getDoctrine()->getManager();
-            // your code
-            // 1) build the form
-            $content = $this->getContentAsArray($request);
-            $user = new User();
-            // set user as content send in post
-            $user->setUsername($content->get('user_username'));
-            $user->setEmail($content->get('user_email'));
-            $first_pass = $content->get('user_plainPassword_first');
-            $second_pass = $content->get('user_plainPassword_second');
-            $this->checkPassWordEqual($first_pass, $second_pass);
-            $user->setPlainPassword($content->get('user_plainPassword_first'));
-            // Encode the password (you could also do this via Doctrine listener)
-            $this->encodePassword($user, $passwordEncoder);
-
-            $errors = $validator->validate($user);
-            // validate user
-            if (count($errors) > 0) {
-                /*
-                 * Uses a __toString method on the $errors variable which is a
-                 * ConstraintViolationList object. This gives us a nice string
-                 * for debugging.
-                 */
-                 $message = "";
-                 foreach ($errors as $key => $value) {
-                   if(0 != $key)
-                    $message .= ", and ";
-                    $message .= $value->getMessage();
-                 }
-
-                throw new \Exception($message, 422);
-            }
-
-            // 4) save the User!
-            try{
-              $entityManager->persist($user);
-              $entityManager->flush();
-            } catch (\Exception $e){
-              throw new \Exception("Error Processing Request: ".$e, 400);
-
-            }
-
-            return new Response('You Are Registered in Nitehop', 201);
-            }
-        }
+        return $register->register($request);
+    }
 
     protected function getContentAsArray(Request $request){
       $content = $request->getContent();
