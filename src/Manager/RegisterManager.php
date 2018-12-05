@@ -23,7 +23,7 @@ class RegisterManager extends BaseManager
         $user = new User();
         $content = $this->getContentAsArray($request);
         // set user as content send in post
-        $username = !is_null($content->get('username'))? $content->get('username') : $content->get('name');
+        $username = !is_null($content->get('username'))? $content->get('username') : $content->get('email');
         $user->setUsername($username);
         $user->setName($content->get('name'));
         $user->setEmail($content->get('email'));
