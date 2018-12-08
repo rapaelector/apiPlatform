@@ -15,7 +15,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     denormalizationContext={"groups"={"historicPost"}},
  *     collectionOperations={
  *         "get",
- *         "post"={"access_control"="is_granted('ROLE_USER')"}
+ *         "post"
  *     },
  * )
  * @ORM\HasLifecycleCallbacks()

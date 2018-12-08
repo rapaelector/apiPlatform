@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -15,7 +17,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     denormalizationContext={"groups"={"historicPost"}},
  *     collectionOperations={
  *         "get",
- *         "post"={"access_control"="is_granted('ROLE_USER')"}
+ *         "post"
  *     },
  * )
  * @ORM\HasLifecycleCallbacks()
@@ -48,9 +50,14 @@ class Mixture
     private $image;
 
     /**
-    * @ORM\ManyToOne(targetEntity="Drinks", inversedBy="mixtures")
+    * @ORM\ManyToMany(targetEntity="Drinks", inversedBy="mixtures")
     */
     private $drinks;
+
+    public function __construct()
+    {
+        $this->drinks = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -98,9 +105,20 @@ class Mixture
         return $this->drinks;
     }
 
-    public function setDrinks(?Drinks $drinks): self
+    public function addDrink(Drinks $drink): self
     {
-        $this->drinks = $drinks;
+        if (!$this->drinks->contains($drink)) {
+            $this->drinks[] = $drink;
+        }
+
+        return $this;
+    }
+
+    public function removeDrink(Drinks $drink): self
+    {
+        if ($this->drinks->contains($drink)) {
+            $this->drinks->removeElement($drink);
+        }
 
         return $this;
     }

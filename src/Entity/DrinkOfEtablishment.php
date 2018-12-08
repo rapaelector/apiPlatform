@@ -19,7 +19,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
  *     normalizationContext={"groups"={"read"}, "enable_max_depth"=false},
  *     collectionOperations={
  *         "get",
- *         "post"={"access_control"="is_granted('ROLE_USER')"}
+ *         "post"
  *     },
  * )
  * @ORM\HasLifecycleCallbacks()

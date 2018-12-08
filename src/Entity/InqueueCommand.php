@@ -5,9 +5,22 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Core\Annotation\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * @ORM\Entity(repositoryClass="App\Repository\InqueueCommandRepository")
+ * @ORM\Entity
+ * @ORM\HasLifecycleCallbacks()
+ * @ApiResource(
+ *     forceEager=false,
+ *     normalizationContext={"groups"={"read"}, "enable_max_depth"=false},
+ *     denormalizationContext={"groups"={"historicPost"}},
+ *     collectionOperations={
+ *         "get",
+ *         "post"
+ *     },
+ * )
+ * @ORM\HasLifecycleCallbacks()
  */
 class InqueueCommand
 {
@@ -20,21 +33,25 @@ class InqueueCommand
 
     /**
      * @ORM\OneToOne(targetEntity="App\Entity\BuyDrink", cascade={"persist", "remove"})
+    * @Groups({"putUser", "historicPost", "read"})
      */
     private $bill;
 
     /**
      * @ORM\OneToOne(targetEntity="App\Entity\Etablishment", cascade={"persist", "remove"})
+    * @Groups({"putUser", "historicPost", "read"})
      */
     private $etablishment;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
+    * @Groups({"putUser", "historicPost", "read"})
      */
     private $orderDate;
 
     /**
      * @ORM\ManyToMany(targetEntity="App\Entity\Drinks", mappedBy="inqueueCommand")
+    * @Groups({"putUser", "historicPost", "read"})
      */
     private $drinkNameList;
 

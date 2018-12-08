@@ -22,7 +22,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
  *     denormalizationContext={"groups"={"historicPost"}},
  *     collectionOperations={
  *         "get",
- *         "post"={"access_control"="is_granted('ROLE_USER')"}
+ *         "post"
  *     },
  * )
  * @ORM\HasLifecycleCallbacks()
@@ -65,7 +65,7 @@ class Drinks
     private $withMixture;
 
     /**
-    * @ORM\ManyToMany(targetEntity="Mixture", mappedBy="drink", cascade={"PERSIST"})
+    * @ORM\ManyToMany(targetEntity="Mixture", mappedBy="drinks", cascade={"PERSIST", "DELET})
     * @Groups({"putUser", "historicPost", "read"})
     */
     private $mixtures;
@@ -229,7 +229,7 @@ class Drinks
     {
         if (!$this->mixtures->contains($mixture)) {
             $this->mixtures[] = $mixture;
-            $mixture->setDrink($this);
+            $mixture->addDrink($this);
         }
 
         return $this;
@@ -239,10 +239,6 @@ class Drinks
     {
         if ($this->mixtures->contains($mixture)) {
             $this->mixtures->removeElement($mixture);
-            // set the owning side to null (unless already changed)
-            if ($mixture->getDrink() === $this) {
-                $mixture->setDrink(null);
-            }
         }
 
         return $this;

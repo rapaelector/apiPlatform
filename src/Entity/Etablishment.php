@@ -22,7 +22,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
  *     denormalizationContext={"groups"={"historicPost"}},
  *     collectionOperations={
  *         "get",
- *         "post"={"access_control"="is_granted('ROLE_USER')"}
+ *         "post"
  *     },
  * )
  * @ORM\HasLifecycleCallbacks()
