@@ -65,7 +65,7 @@ class Drinks
     private $withMixture;
 
     /**
-    * @ORM\ManyToMany(targetEntity="Mixture", mappedBy="drinks", cascade={"PERSIST", "DELET})
+    * @ORM\ManyToMany(targetEntity="Mixture", mappedBy="drinks", cascade={"PERSIST"}, orphanRemoval=true)
     * @Groups({"putUser", "historicPost", "read"})
     */
     private $mixtures;
