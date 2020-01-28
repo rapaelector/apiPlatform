@@ -22,19 +22,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
  * @ApiResource(
  *     forceEager=false,
  *     normalizationContext={"groups"={"read"}, "enable_max_depth"=false},
- *     denormalizationContext={"groups"={"putUser"}},
- *     collectionOperations={
- *         "get",
- *         "post"={"access_control"="is_granted('ROLE_USER')"},
- *     },
- *    itemOperations={
- *         "put"={
- *             "normalization_context"={"groups"={"putUser"}}
- *         },
- *        "get"={
- *             "normalization_context"={"groups"={"read"}}
- *         }
- *     }
+ *     denormalizationContext={"groups"={"putUser"}}
  * )
  * @ORM\HasLifecycleCallbacks()
  */
@@ -50,7 +38,6 @@ class User implements UserInterface, \Serializable
 
     /**
     * @ORM\OneToMany(targetEntity="Historic", mappedBy="user", cascade={"PERSIST"})
-    * @Groups({"putUser", "read"})
     */
     private $historic;
 
