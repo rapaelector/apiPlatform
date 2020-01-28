@@ -20,10 +20,6 @@ use ApiPlatform\Core\Annotation\ApiResource;
  *     forceEager=false,
  *     normalizationContext={"groups"={"read"}, "enable_max_depth"=false},
  *     denormalizationContext={"groups"={"historicPost"}},
- *     collectionOperations={
- *         "get",
- *         "post"
- *     },
  * )
  * @ORM\HasLifecycleCallbacks()
  */
